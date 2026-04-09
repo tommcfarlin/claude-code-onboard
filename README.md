@@ -2,6 +2,8 @@
 
 Onboard a Claude session on your codebase in one command. Produces a cached summary shared across all git worktrees — onboard once, every session starts with context.
 
+> **Note:** This skill is experimental and actively being evaluated in real-world workflows. It works, but expect rough edges and changes as it matures. See [EVALUATION.md](EVALUATION.md) for the testing methodology.
+
 ## The Problem
 
 Every time you start a new Claude session, it knows nothing about your project. It reads the directory, opens files, scans configs — the same orientation dance, every single time. If you use git worktrees, multiply that by every worktree you have open.
@@ -93,11 +95,10 @@ The summary at `<git-common-dir>/claude-onboard.md` contains:
 
 ## Installation
 
+Clone the repo directly into your Claude Code skills directory:
+
 ```bash
-amskills install onboard
+git clone https://github.com/tommcfarlin/claude-code-onboard.git ~/.claude/skills/onboard
 ```
 
-Or install manually — download the package from [skills.awesomemotive.com/skills/onboard](https://skills.awesomemotive.com/skills/onboard/) and extract to:
-```
-~/.claude/skills/onboard/
-```
+After that, `/onboard` is available in any Claude Code session.
