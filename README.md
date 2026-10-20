@@ -35,6 +35,12 @@ Onboard with a full scan of all source files:
 /onboard --read-all
 ```
 
+Clone a repo into an empty folder and onboard on it (if the folder is empty and no URL is given, you'll be asked for one):
+
+```
+/onboard --clone https://github.com/owner/repo
+```
+
 Force a fresh scan (ignores cache):
 
 ```
