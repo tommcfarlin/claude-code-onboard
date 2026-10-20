@@ -2,7 +2,7 @@
 name: onboard
 description: "Onboard a Claude session on the current codebase with smart caching and delta updates. Optimized for git worktree workflows — onboard once, share context across all worktrees."
 allowed-tools: "Bash Read Write Glob Grep"
-argument-hint: "[--read-all] [--refresh]"
+argument-hint: "[--clone <git-url>] [--read-all] [--refresh]"
 ---
 
 # Onboard
@@ -20,6 +20,7 @@ Onboard this Claude session on the current codebase. Produces a cached summary s
 - **No flags (default):** Key files mode — reads manifests, configs, entry points, READMEs, and a sample of source files. Fast, low token cost.
 - **`--read-all`:** Full scan — reads all text-based source files. Thorough, higher token cost. Use for initial onboarding on a new project or when key files mode missed important context.
 - **`--refresh`:** Forces a full rescan even if a cached summary exists. Combines with `--read-all` if both are passed.
+- **`--clone <git-url>`:** Clones the given repository into the current folder, then onboards on it. Requires an empty current folder (see Setup). Combines with `--read-all`.
 
 ## Setup
 
@@ -31,10 +32,17 @@ git rev-parse --git-common-dir
 
 The onboard summary lives at `<git-common-dir>/claude-onboard.md`. Using `--git-common-dir` (not `--git-dir`) ensures the summary is shared across all worktrees.
 
-If this is not a git repository, tell the user:
-> "This directory isn't a git repository. Onboard requires git to track changes and share context across worktrees."
+If this is not a git repository, check whether the current directory is empty (hidden files included):
 
-Stop here.
+```bash
+[ -z "$(ls -A .)" ] && echo EMPTY || echo NOT_EMPTY
+```
+
+- **Empty:** use the URL from `--clone`, or ask the user: "This folder is empty. What git repository URL should I clone here and onboard on?" Do not guess a URL. Run `git clone <url> .`. If it fails, show the error and ask for a corrected URL; don't retry blindly. On success, re-run `git rev-parse --git-common-dir` and continue.
+- **Not empty:** if `--clone` was passed, tell the user "`--clone` needs an empty folder, but this one has files." Otherwise tell the user:
+  > "This directory isn't a git repository. Onboard requires git to track changes and share context across worktrees."
+
+  Stop here.
 
 ## Behavior
 
